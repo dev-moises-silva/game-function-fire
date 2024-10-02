@@ -77,13 +77,18 @@ export function App() {
     } else if (circCoef) {
       const { h, k, r } = circCoef
 
+      function quaseEqual(a: number, b: number, tolerancia = 0.0001) {
+        return Math.abs(a - b) < tolerancia;
+      }
+
       newCoords = coordsSet.filter((coord) => {
         const { x, y } = coord
 
-        return r ** 2 != (x - h) ** 2 + (y - k) ** 2
+        console.log(r ** 2, (x - h) ** 2 + (y - k) ** 2, x, y)
+        return !quaseEqual(r ** 2, (x - h) ** 2 + (y - k) ** 2) 
       })
 
-      points = (coordsSet.length - newCoords.length) + 4
+      points = (coordsSet.length - newCoords.length) * 4
     } else {
       newCoords = coordsSet
     }
@@ -146,13 +151,13 @@ export function App() {
         )}
       {gameIsRunning && coordsSet.length > 0 && <EquationInput readOnly={equationInputReadeOnly} setEquation={setCurrentEquation}/>}
       {gameIsRunning && coordsSet.length === 0 && (
-        <Button onClick={restartGame} variant="success">
+        <Button onClick={restartGame} variant="success" className="mb-3">
           Começar o jogo novamente
         </Button>
       )}
       {equationInputReadeOnly && coordsSet.length > 0 && (
-        <Button onClick={toNextRound} variant="success">
-          Próxima rodada
+        <Button onClick={toNextRound} variant="success mb-3">
+          Ir para o próximo jogador
         </Button>
       )}
       <CartesianPlane coords={coordsSet} equation={currentEquation}/>

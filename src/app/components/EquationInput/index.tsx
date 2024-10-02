@@ -12,8 +12,9 @@ type Props = {
 }
 
 export function EquationInput({ setEquation, readOnly }: Props) {
-  const retaReduzidaRegex = /^y\s*=\s*[+-]?\d*(?:\.\d+)?x\s*[+-]?\d*(?:\.\d+)?$/
-  const circunferenciaRegex = /^\(x\s*[+-]\s*\d+\)\^2\s*\+\s*\(y\s*[+-]\s*\d+\)\^2\s*=\s*\d+\^2$/
+  const regexReta = /^y\s*=\s*([+-]?\d*(?:\/\d+)?(?:\.\d+)?|[+-]?)x\s*([+-]?\d*(?:\/\d+)?(?:\.\d+)?)?$/
+  const regexCircunferencia = /^\(x\s*([+-])\s*(\d+)\)\^2\s*\+\s*\(y\s*([+-])\s*(\d+)\)\^2\s*=\s*(\d+)(?:\^2)?$/
+  const regexCircunferencia2 = /^x\^2\s*\+\s*y\^2\s*=\s*(\d+)\^2$|^x\^2\s*\+\s*y\^2\s*=\s*(\d+)$/
 
   const formik = useFormik({
     initialValues: {
@@ -26,11 +27,12 @@ export function EquationInput({ setEquation, readOnly }: Props) {
           'is-equacao-reta-ou-circunferencia',
           'A equação deve representar uma reta ou uma circunferência válida.',
           function (value) {
-            if (!value) return false;
+            if (!value) return false
             return (
-              retaReduzidaRegex.test(value) ||
-              circunferenciaRegex.test(value)
-            );
+              regexReta.test(value) ||
+              regexCircunferencia.test(value) ||
+              regexCircunferencia2.test(value)
+            )
           }
         )
     }),

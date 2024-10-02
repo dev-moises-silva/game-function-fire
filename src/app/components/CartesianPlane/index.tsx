@@ -38,10 +38,14 @@ export function CartesianPlane({equation, coords}: Props) {
 
       // converter para coordenadas no canvas
       x1 += midX
-      y1 = midY - y1
+      y1 = midY - y1 * 5
       x2 += midX
-      y2 = midY - y2
+      y2 = midY - y2 * 5
 
+      console.log(x1, y1)
+      console.log(x2, y2);
+      
+      
       ctx.moveTo(x1, y1)
       ctx.lineTo(x2, y2)
       ctx.stroke()
@@ -51,22 +55,24 @@ export function CartesianPlane({equation, coords}: Props) {
       ctx.beginPath()
 
       // converter as coordenadas do centro para o canvas
-      const x = midX + h
-      const y = midY - k
-      ctx.arc(x, y, r, 0, 2 * Math.PI)
+      const x = midX + h * 5
+      const y = midY - k * 5
+      console.log(h, k, r)
+      console.log(x, y, r)
+      ctx.arc(x, y, r * 5, 0, 2 * Math.PI)
       ctx.stroke()
     }
 
     function drawnPoint(x: number, y: number, color = "red") {
       ctx.beginPath()
-      ctx.arc(midX + x, midY - y, 5, 0, 2 * Math.PI)
+      ctx.arc(midX + x * 5, midY - y * 5, 5, 0, 2 * Math.PI)
       ctx.fillStyle = color
       ctx.fill()
 
       // exibir as coordenadas do ponto
       ctx.fillStyle = "black"
       ctx.font = "12px Arial"
-      ctx.fillText(`(${x}, ${y})`, midX + x + 5, midY - y + 5)
+      ctx.fillText(`(${x}, ${y})`, midX + x * 5 + 5, midY - y * 5 + 5)
     }
 
     ctx.clearRect(0, 0, width, height)
@@ -82,7 +88,7 @@ export function CartesianPlane({equation, coords}: Props) {
       const lineCoef = useLine(equation)
 
       if(lineCoef) {
-        const { a, b} = lineCoef
+        const { a, b } = lineCoef
         drawnLine(a, b)
       }
 
