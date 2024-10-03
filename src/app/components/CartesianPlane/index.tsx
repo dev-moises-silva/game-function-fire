@@ -66,6 +66,8 @@ export function CartesianPlane({equation, coords}: Props) {
       x2 = midX + x2 * 10
       y2 = midY - y2 * 10
 
+      ctx.moveTo(x1, y1)
+      ctx.lineTo(x2, y2)
       ctx.stroke()
     }
 

@@ -60,7 +60,7 @@ export function App() {
     setEquationInputReadeOnly(true)
 
     let points = 0
-    let newCoords = coordsSet.map(coords => ({...coords}))
+    const newCoords = coordsSet.map(coords => ({...coords}))
 
     function quaseEqual(a: number, b: number, tolerancia = 0.0001) {
       return Math.abs(a - b) < tolerancia;
@@ -75,7 +75,7 @@ export function App() {
       newCoords.forEach((coords) => {
         const { x, y } = coords
 
-        if(quaseEqual(y, a * x + b)) {
+        if(quaseEqual(y, a * x + b) && coords.active) {
           coords.active = false
           ++points
         }
@@ -88,7 +88,7 @@ export function App() {
       newCoords.forEach((coords) => {
         const { x, y } = coords
 
-        if(quaseEqual(r ** 2, (x - h) ** 2 + (y - k) ** 2) ) {
+        if(quaseEqual(r ** 2, (x - h) ** 2 + (y - k) ** 2) && coords.active) {
           coords.active = false
           points+=2
         }
@@ -130,6 +130,11 @@ export function App() {
   
   return (
     <>
+      {gameIsRunning && !hasActiveCoords && (
+        <div className={`text-bg-${playerOnePoints === playerTwoPoints ? "info" : "success"} fs-5 p-2 text-center mb-2 rounded-2`}>
+          {playerOnePoints === playerTwoPoints ? "Deu empate" : `O jogador ${playerOnePoints > playerTwoPoints ? "1" : "2"} ganhou!!`}
+        </div>
+      )}
       {gameIsRunning && hasActiveCoords && (
         <div className={`text-bg-${playerOneIsNext ? "danger" : "primary"} fs-5 p-2 text-center mb-2 rounded-2`}>
           Vez do jogador {playerOneIsNext ? "2" : "1"}
@@ -148,15 +153,10 @@ export function App() {
         </div>
         )}
       {gameIsRunning && hasActiveCoords && !equationInputReadeOnly && <EquationInput readOnly={equationInputReadeOnly} setEquation={setCurrentEquation}/>}
-      {gameIsRunning && !hasActiveCoords && (
-        <Button onClick={restartGame} variant="outline-success" className="mb-2">
-          Começar o jogo novamente
-        </Button>
-      )}
-      {equationInputReadeOnly && hasActiveCoords && (
+      {gameIsRunning && equationInputReadeOnly && (
         <div className="d-flex justify-content-between align-items-center mb-2">
-          <Button onClick={toNextRound} variant="outline-success">
-            Ir para o próximo jogador
+          <Button onClick={hasActiveCoords ? toNextRound : restartGame} variant="outline-success">
+            {hasActiveCoords ? "Ir para o próximo jogador" : "Começar o jogo novamente"}
           </Button>
           <div className="fw-bold fs-5">
             {currentEquation}
