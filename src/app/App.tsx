@@ -10,7 +10,6 @@ import { EquationInput } from "./components/EquationInput"
 import { CoordInput } from "./components/CoordInput"
 import { Coords } from "./types/Coords"
 import { useCirc, useLine } from "./hooks"
-import { AlertHeading } from "react-bootstrap"
 
 export function App() {
   const [coordsSet, setCoordsSet] = useState<Coords[]>([])
