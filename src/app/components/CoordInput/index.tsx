@@ -16,12 +16,12 @@ export function CoordInput({ addCoords }: Props) {
       y: 0
     },
     onSubmit: (values, { resetForm }) => {
-      addCoords(values)
+      addCoords({...values, active: true})
       resetForm()
     }
   })
   return (
-    <Form onSubmit={formik.handleSubmit}>
+    <Form onSubmit={formik.handleSubmit} className="mb-2">
       <InputGroup
         style={{
           maxWidth: "250px"
@@ -30,11 +30,11 @@ export function CoordInput({ addCoords }: Props) {
         <Button type="submit" variant="outline-secondary" title="adicionar coodenadas">
           <IoAdd />
         </Button>
-        <Form.Control name="x" value={formik.values.x} required type="number" min={-250} max={250} onChange={formik.handleChange}/>
+        <Form.Control name="x" value={formik.values.x} required type="number" min={-20} max={20} onChange={formik.handleChange}/>
         <InputGroup.Text>
         ,
         </InputGroup.Text>
-        <Form.Control name="y" value={formik.values.y} required type="number" min={-250} max={250} onChange={formik.handleChange}/>
+        <Form.Control name="y" value={formik.values.y} required type="number" min={-24} max={24} onChange={formik.handleChange}/>
       </InputGroup>
     </Form>
   )

@@ -42,10 +42,10 @@ export function EquationInput({ setEquation, readOnly }: Props) {
     }
   })
   return(
-    <Form onSubmit={formik.handleSubmit} className="mb-3">
+    <Form onSubmit={formik.handleSubmit} className="mb-2">
       <InputGroup>
         <Form.Control value={formik.values.equation} name="equation" readOnly={readOnly} placeholder="Equação da reta ou da circunferência..." onChange={formik.handleChange} isInvalid={!!(formik.touched.equation && formik.errors.equation)}/>
-        <Button type="submit" disabled={readOnly}>
+        <Button type="submit" disabled={readOnly} variant="outline-primary">
           <FaArrowRight />
         </Button>
       </InputGroup>

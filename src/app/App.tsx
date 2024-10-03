@@ -20,7 +20,8 @@ export function App() {
   const [currentEquation, setCurrentEquation] = useState<string>()
   const [gameIsRunning, setGameIsRunning] = useState(false)
   const [equationInputReadeOnly, setEquationInputReadeOnly] = useState(false)
-
+  const hasActiveCoords = coordsSet.filter(coords => coords.active).length > 0
+  
   function restartGame() {
     setPlayerOneIsNext(false)
     setPlayerOnePoints(0)
@@ -59,7 +60,11 @@ export function App() {
     setEquationInputReadeOnly(true)
 
     let points = 0
-    let newCoords
+    let newCoords = coordsSet.map(coords => ({...coords}))
+
+    function quaseEqual(a: number, b: number, tolerancia = 0.0001) {
+      return Math.abs(a - b) < tolerancia;
+    }
     
     const lineCoef = useLine(currentEquation)
     const circCoef = useCirc(currentEquation)
@@ -67,33 +72,28 @@ export function App() {
     if (lineCoef) {
       const { a, b } = lineCoef
 
-      newCoords = coordsSet.filter((coord) => {
-        const { x, y } = coord
+      newCoords.forEach((coords) => {
+        const { x, y } = coords
 
-        return y != a * x + b
+        if(quaseEqual(y, a * x + b)) {
+          coords.active = false
+          ++points
+        }
       })
-
-      points = (coordsSet.length - newCoords.length) * 2
-    } else if (circCoef) {
+    }
+    
+    if (circCoef) {
       const { h, k, r } = circCoef
 
-      function quaseEqual(a: number, b: number, tolerancia = 0.0001) {
-        return Math.abs(a - b) < tolerancia;
-      }
+      newCoords.forEach((coords) => {
+        const { x, y } = coords
 
-      newCoords = coordsSet.filter((coord) => {
-        const { x, y } = coord
-
-        console.log(r ** 2, (x - h) ** 2 + (y - k) ** 2, x, y)
-        return !quaseEqual(r ** 2, (x - h) ** 2 + (y - k) ** 2) 
+        if(quaseEqual(r ** 2, (x - h) ** 2 + (y - k) ** 2) ) {
+          coords.active = false
+          points+=2
+        }
       })
-
-      points = (coordsSet.length - newCoords.length) * 4
-    } else {
-      newCoords = coordsSet
     }
-
-    setCoordsSet(newCoords)
 
     if(playerOneIsNext) {
       setPlayerTwoPoints(playerTwoPoints + points)
@@ -106,11 +106,13 @@ export function App() {
     Swal.fire({
       icon: points ? "success" : "warning",
       titleText: message
+    }).then(() => {
+      setCoordsSet(newCoords)
     })
   }, [currentEquation])
 
   useEffect(() => {
-    if(coordsSet.length === 0 && gameIsRunning) {
+    if(!hasActiveCoords && gameIsRunning) {
       if(playerOnePoints === playerTwoPoints) {
         Swal.fire({
           titleText: "Deu empate",
@@ -130,37 +132,42 @@ export function App() {
   
   return (
     <>
-      {gameIsRunning && coordsSet.length > 0 && (
-        <>
-          <Alert>
-            <AlertHeading>Vez do jogador {playerOneIsNext ? "2" : "1"}!</AlertHeading>
-          </Alert>
-        </>
+      {gameIsRunning && hasActiveCoords && (
+        <div className={`text-bg-${playerOneIsNext ? "primary" : "danger"} fs-5 p-2 text-center mb-2 rounded-2`}>
+          Vez do jogador {playerOneIsNext ? "2" : "1"}
+        </div>
       )}
       {gameIsRunning && (
-        <Alert variant="info">
+        <Alert variant="dark" className="mb-2">
           Jogador 1: {playerOnePoints} pontos <br />
           Jogador 2: {playerTwoPoints} pontos
         </Alert>
       )}
       {!gameIsRunning && (
-        <div className="d-flex justify-content-between mb-3">
+        <div className="d-flex justify-content-between mb-2">
           <CoordInput addCoords={addCoords}/>
-          <Button disabled={coordsSet.length === 0} variant="success" onClick={play}>jogar</Button>
+          <Button disabled={!hasActiveCoords} variant="outline-success" onClick={play}>jogar</Button>
         </div>
         )}
-      {gameIsRunning && coordsSet.length > 0 && <EquationInput readOnly={equationInputReadeOnly} setEquation={setCurrentEquation}/>}
-      {gameIsRunning && coordsSet.length === 0 && (
-        <Button onClick={restartGame} variant="success" className="mb-3">
+      {gameIsRunning && hasActiveCoords && <EquationInput readOnly={equationInputReadeOnly} setEquation={setCurrentEquation}/>}
+      {gameIsRunning && !hasActiveCoords && (
+        <Button onClick={restartGame} variant="outline-success" className="mb-2">
           Começar o jogo novamente
         </Button>
       )}
-      {equationInputReadeOnly && coordsSet.length > 0 && (
-        <Button onClick={toNextRound} variant="success mb-3">
-          Ir para o próximo jogador
-        </Button>
+      {equationInputReadeOnly && hasActiveCoords && (
+        <div className="d-flex justify-content-between align-items-center mb-2">
+          <Button onClick={toNextRound} variant="outline-success">
+            Ir para o próximo jogador
+          </Button>
+          <div className="fw-bold fs-5">
+            {currentEquation}
+          </div>
+        </div>
       )}
-      <CartesianPlane coords={coordsSet} equation={currentEquation}/>
+      <div className="w-100 d-flex justify-content-center">
+        <CartesianPlane coords={coordsSet} equation={currentEquation}/>
+      </div>
     </>
   )
 }

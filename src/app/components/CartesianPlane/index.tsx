@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react"
-import { useCirc, useLine } from "../../hooks"
 
+import { useCirc, useLine } from "../../hooks"
 import { Coords } from "../../types/Coords"
 
 type Props = {
@@ -20,6 +20,8 @@ export function CartesianPlane({equation, coords}: Props) {
 
     // função que desenha os eixos do plano cartesiano
     function drawAxes(){
+      ctx.strokeStyle = "#000000"  // Cor dos eixos (preto)
+
       ctx.beginPath()
       ctx.moveTo(0, midY)
       ctx.lineTo(width, midY)
@@ -28,60 +30,84 @@ export function CartesianPlane({equation, coords}: Props) {
       ctx.stroke()
     }
 
+    function drawnGrid() {
+      // Cor da grade
+      ctx.strokeStyle = "#e0e0e0"; // cor cinza-claro
+      ctx.lineWidth = 1; // Espessura da linha da grade
+
+      for(let x = 0; x <= width; x += 50) {
+        ctx.beginPath()
+        ctx.moveTo(x, 0)
+        ctx.lineTo(x, height)
+        ctx.stroke()
+      }
+
+      for(let y = 0; y <= height; y += 50) {
+        ctx.beginPath()
+        ctx.moveTo(0, y)
+        ctx.lineTo(width, y)
+        ctx.stroke()
+      }
+    }
+
     // função que desenha o gráfico da função do 1° grau
     function drawnLine(a: number, b: number) {
+      ctx.strokeStyle = "#000000"
+
       ctx.beginPath()
 
       // definir coordenadas de dois pontos para o desenho da reta
-      let x1 = -midX, y1 = a * x1 + b
-      let x2 = midX, y2 = a * x2 + b
+      let x1 = -midX / 10, y1 = a * x1 + b
+      let x2 = midX / 10, y2 = a * x2 + b
 
       // converter para coordenadas no canvas
-      x1 += midX
-      y1 = midY - y1 * 5
-      x2 += midX
-      y2 = midY - y2 * 5
+      x1 = midX + x1 * 10
+      y1 = midY - y1 * 10
+      x2 = midX + x2 * 10
+      y2 = midY - y2 * 10
 
       console.log(x1, y1)
-      console.log(x2, y2);
-      
-      
+      console.log(x2, y2)
+    
       ctx.moveTo(x1, y1)
       ctx.lineTo(x2, y2)
       ctx.stroke()
     }
 
     function drawCircle(h: number, k: number, r: number) {
+      ctx.strokeStyle = "#000000"
+      
       ctx.beginPath()
 
       // converter as coordenadas do centro para o canvas
-      const x = midX + h * 5
-      const y = midY - k * 5
+      const x = midX + h * 10
+      const y = midY - k * 10
       console.log(h, k, r)
       console.log(x, y, r)
-      ctx.arc(x, y, r * 5, 0, 2 * Math.PI)
+      ctx.arc(x, y, r * 10, 0, 2 * Math.PI)
       ctx.stroke()
     }
 
-    function drawnPoint(x: number, y: number, color = "red") {
+    function drawnPoint(coord: Coords) {
+      const { x, y, active } = coord
       ctx.beginPath()
-      ctx.arc(midX + x * 5, midY - y * 5, 5, 0, 2 * Math.PI)
-      ctx.fillStyle = color
+      ctx.arc(midX + x * 10, midY - y * 10, 5, 0, 2 * Math.PI)
+      ctx.fillStyle = active ? "red" : "#4e5154"
       ctx.fill()
 
       // exibir as coordenadas do ponto
       ctx.fillStyle = "black"
       ctx.font = "12px Arial"
-      ctx.fillText(`(${x}, ${y})`, midX + x * 5 + 5, midY - y * 5 + 5)
+      ctx.fillText(`(${x}, ${y})`, midX + x * 10 + 5, midY - y * 10 + 5)
     }
 
     ctx.clearRect(0, 0, width, height)
 
     drawAxes()
+    drawnGrid()
 
     coords.forEach((coord) => {
-      const { x, y } = coord
-      drawnPoint(x, y)
+      drawnPoint(coord)
     })
 
     if(equation) {
