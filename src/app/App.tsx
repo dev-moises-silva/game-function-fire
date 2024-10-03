@@ -133,7 +133,7 @@ export function App() {
   return (
     <>
       {gameIsRunning && hasActiveCoords && (
-        <div className={`text-bg-${playerOneIsNext ? "primary" : "danger"} fs-5 p-2 text-center mb-2 rounded-2`}>
+        <div className={`text-bg-${playerOneIsNext ? "danger" : "primary"} fs-5 p-2 text-center mb-2 rounded-2`}>
           Vez do jogador {playerOneIsNext ? "2" : "1"}
         </div>
       )}
@@ -149,7 +149,7 @@ export function App() {
           <Button disabled={!hasActiveCoords} variant="outline-success" onClick={play}>jogar</Button>
         </div>
         )}
-      {gameIsRunning && hasActiveCoords && <EquationInput readOnly={equationInputReadeOnly} setEquation={setCurrentEquation}/>}
+      {gameIsRunning && hasActiveCoords && !equationInputReadeOnly && <EquationInput readOnly={equationInputReadeOnly} setEquation={setCurrentEquation}/>}
       {gameIsRunning && !hasActiveCoords && (
         <Button onClick={restartGame} variant="outline-success" className="mb-2">
           Começar o jogo novamente
