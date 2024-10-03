@@ -127,8 +127,6 @@ export function App() {
       }
     }
   }, [coordsSet])
-
-  console.log(!!coordsSet);
   
   return (
     <>

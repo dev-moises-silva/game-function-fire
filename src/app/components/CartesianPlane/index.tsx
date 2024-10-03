@@ -66,24 +66,17 @@ export function CartesianPlane({equation, coords}: Props) {
       x2 = midX + x2 * 10
       y2 = midY - y2 * 10
 
-      console.log(x1, y1)
-      console.log(x2, y2)
-    
-      ctx.moveTo(x1, y1)
-      ctx.lineTo(x2, y2)
       ctx.stroke()
     }
 
     function drawCircle(h: number, k: number, r: number) {
       ctx.strokeStyle = "#000000"
-      
+
       ctx.beginPath()
 
       // converter as coordenadas do centro para o canvas
       const x = midX + h * 10
       const y = midY - k * 10
-      console.log(h, k, r)
-      console.log(x, y, r)
       ctx.arc(x, y, r * 10, 0, 2 * Math.PI)
       ctx.stroke()
     }
